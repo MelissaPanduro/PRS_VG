@@ -1,0 +1,62 @@
+# kubectl apply -f deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prs
+  namespace: melissa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prs
+  template:
+    metadata:
+      labels:
+        app: prs
+    spec:
+      containers:
+      - name: prs
+        image: melissapanduro/prs_backend   # Reemplaza con tu imagen Docker
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials                # Nombre del Secret
+              key: DATABASE_URL                         # Clave dentro del Secret
+        - name: DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: DATABASE_USERNAME
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: DATABASE_PASSWORD
+      
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prs
+  namespace: melissa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prs
+  template:
+    metadata:
+      labels:
+        app: prs
+    spec:
+      containers:
+      - name: prs
+        image: melissapanduro/prs_frontend  # Reemplaza con tu imagen Docker del frontend
+        env:
+        - name: API_BACKEND
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: API_BACKEND  # La clave en el Secret para API_BACKEND
